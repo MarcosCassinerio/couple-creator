@@ -1,0 +1,6 @@
+# depslib dependency file v1.0
+1573695162 source:c:\users\nanoc\documents\proyects\tp2\main.c
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+

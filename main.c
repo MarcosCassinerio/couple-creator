@@ -12,48 +12,106 @@ struct Personas {
 } Persona;
 
 void tomarLocalidades(char localidades[][70]) {
-    long pos = 0;
+    long localidadesPos = 0;
 
     FILE *localidadesFile;
     localidadesFile = fopen("codigoLocalidades.txt", "r");
 
-    char buff[70];
+    char linea[70];
 
     while (!feof((FILE*)localidadesFile)) {
-        fgets(buff, 70, (FILE*)localidadesFile);
+        fgets(linea, 70, (FILE*)localidadesFile);
 
-        for (int n = 0 ; n < (strlen(buff) - 1) ; ++n) {
-            if (buff[n] == ',') {
-                ++n;
+        int comaBandera = 0, localidadesCont = 0;
 
-                int h = 0;
+        for (int cont = 0 ; (cont < (strlen(linea) - 1)) && ((linea[cont] != ' ') || (linea[cont+1] != ' ')) ; ++cont) {
+            if (linea[cont] == ',') {
+                comaBandera = 1;
 
-                for (int j = n; (j < (strlen(buff) - 1)) || (buff[n] == ' ' && buff[n+1] == ' ') ; ++j) {
-                    localidades[pos][h] = buff[j];
+                ++cont;
+            }
+            if (comaBandera == 1) {
+                localidades[localidadesPos][localidadesCont] = linea[cont];
 
-                    ++h;
-                }
-
-                localidades[pos][h] = '\0';
-
-                ++pos;
+                ++localidadesCont;
             }
         }
+
+        localidades[localidadesPos][localidadesCont] = '\0';
+
+        ++localidadesPos;
     }
 
     fclose(localidadesFile);
 }
 
-long stringToLong(char texto[20]) {
-    long numero;
+long cantidadLocalidades() {
+    long cantLocalidades = 0;
 
-    for (int n = 0 ; texto[n] != ' ' || texto[n] != '\0' ; ++n) {
+    char buff[255];
 
+    FILE *localidadesFile;
+    localidadesFile = fopen("codigoLocalidades.txt", "r");
+
+    while (!feof((FILE*)localidadesFile)) {
+        fgets(buff, 255, (FILE*)localidadesFile);
+
+        ++cantLocalidades;
+    }
+
+    fclose(localidadesFile);
+
+    return cantLocalidades;
+}
+
+void tomarNumerosRamdom(long numerosRandom[], long personasATomar, long cantPersonas) {
+    for (long cont = 0 ; cont < personasATomar ; ++cont) {
+        long numeroRandom = rand()%cantPersonas, repetido = 0;
+
+        for (long h = 0 ; h <= cont ; ++h) {
+            if (h == cont) {
+                numerosRandom[h] = numeroRandom;
+            } else {
+                if (numerosRandom[h] == numeroRandom) {
+                    h = cont;
+
+                    repetido = 1;
+                }
+                if (numerosRandom[h] > numeroRandom) {
+                    long actual = numerosRandom[h], sig;
+                            
+                    if ((h+1) != cont) {
+                        sig = numerosRandom[h+1];
+                    }
+
+                    numerosRandom[h] = numeroRandom;
+
+                    numeroRandom = actual;
+
+                    while (h < cont) {
+                        ++h;
+
+                        if (h != cont) {
+                            actual = sig;
+                            
+                            sig = numerosRandom[h+1];
+                        }
+
+                        numerosRandom[h] = numeroRandom;
+
+                        numeroRandom = actual;
+                    }
+                }
+            }
+        }
+        if (repetido == 1) {
+            --cont;
+        }
     }
 }
 
 void tomarPersonas(struct Personas personas[], long cantPersonas, long personasATomar, char localidades[][70]) {
-    long randoms[cantPersonas];
+    long numerosRandom[personasATomar];
 
     char genero[2][2] = {
         "M",
@@ -64,49 +122,11 @@ void tomarPersonas(struct Personas personas[], long cantPersonas, long personasA
         "A",
         "N"
     };
-    
-    for (long n = 0 ; n < personasATomar ; ++n) {
-        long random = rand()%cantPersonas, repetido = 0;
 
-        for (long h = 0 ; h <= n ; ++h) {
-            if (h == n) {
-                randoms[h] = random;
-            } else {
-                if (randoms[h] == random) {
-                    h = n;
+    tomarNumerosRamdom(numerosRandom, personasATomar, cantPersonas);
 
-                    repetido = 1;
-                }
-                if (randoms[h] > random) {
-                    long actual = randoms[h], sig;
-                            
-                    if ((h+1) != n) {
-                        sig = randoms[h+1];
-                    }
-
-                    randoms[h] = random;
-
-                    random = actual;
-
-                    while (h < n) {
-                        ++h;
-
-                        if (h != n) {
-                            actual = sig;
-                            
-                            sig = randoms[h+1];
-                        }
-
-                        randoms[h] = random;
-
-                        random = actual;
-                    }
-                }
-            }
-        }
-        if (repetido == 1) {
-            --n;
-        }
+    for (int n = 0 ; n < personasATomar ; ++n) {
+        printf("%lu\n", numerosRandom[n]);
     }
 
     FILE *personasFile;
@@ -115,10 +135,10 @@ void tomarPersonas(struct Personas personas[], long cantPersonas, long personasA
     char linea[70];
 
     long posPersonas = 0;
-    for (long cont = 1 ; !feof((FILE*)personasFile) || cont < randoms[personasATomar - 1] ; ++cont) {    
+    for (long cont = 1 ; !feof((FILE*)personasFile) || cont < numerosRandom[personasATomar - 1] ; ++cont) {    
         fgets(linea, 70, (FILE*)personasFile);
         
-        if (cont == randoms[posPersonas]) {
+        if (cont == numerosRandom[posPersonas]) {
             int comas = 0;
 
             char coma[2] = ",", *token;
@@ -166,25 +186,6 @@ void tomarPersonas(struct Personas personas[], long cantPersonas, long personasA
     }
 }
 
-long cantidadLocalidades() {
-    long cantLocalidades = 0;
-
-    char buff[255];
-
-    FILE *localidadesFile;
-    localidadesFile = fopen("codigoLocalidades.txt", "r");
-
-    while (!feof((FILE*)localidadesFile)) {
-        fgets(buff, 255, (FILE*)localidadesFile);
-
-        ++cantLocalidades;
-    }
-
-    fclose(localidadesFile);
-
-    return cantLocalidades;
-}
-
 long cantidadPersonas() {
     long cantPersonas = 0;
 
@@ -208,35 +209,32 @@ void imprimirEnArchivo(struct Personas personas[], long personasATomar){
     
     FILE *salida;
 
-    salida=fopen("salida.txt","w+");
+    salida = fopen("salida.txt","w+");
 
-    for(int n=0; n<personasATomar-1; ++n){
-        
+    for (int n = 0 ; n < personasATomar ; ++n) {
         char linea[100];
-        strcat(personas[n].nombre,linea);
-        strcat(",",linea);
-        strcat(personas[n].apellido,linea);
-        strcat(",",linea);
-        strcat(personas[n].localidad,linea);
-        strcat(",",linea);
-        strcat(personas[n].edad,linea);
-        strcat(",",linea);
-        strcat(personas[n].genero,linea);
-        strcat(",",linea);
-        strcat(personas[n].interes,linea);
+        strcpy(linea, "");
+        strcat(linea, personas[n].nombre);
+        strcat(linea, ",");
+        strcat(linea, personas[n].apellido);
+        strcat(linea, ",");
+        strcat(linea, personas[n].localidad);
+        strcat(linea, ",");
+        strcat(linea, personas[n].edad);
+        strcat(linea, ",");
+        strcat(linea, personas[n].genero);
+        strcat(linea, ",");
+        strcat(linea, personas[n].interes);
+        strcat(linea, "\n");
 
-        printf("%s",linea);
-
-        fputs(linea,(FILE*)salida);
-
+        fputs(linea, salida);
     }
 
     fclose(salida);
 
 }
 
-int main()
-{
+int main(){
     long cantLocalidades = cantidadLocalidades(), cantPersonas = cantidadPersonas(), personasATomar = 0;
 
     char localidades[cantLocalidades][70];

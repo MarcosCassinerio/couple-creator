@@ -2,14 +2,14 @@
 #include <stdlib.h>
 #include <string.h>
 
-struct Persona {
+struct Personas {
     char nombre[20];
     char apellido[20];
     char localidad[70];
-    int edad;
+    char edad[5];
     char genero[20];
     char interes[20];
-};
+} Persona;
 
 void tomarLocalidades(char localidades[][70]) {
     long pos = 0;
@@ -52,7 +52,7 @@ long stringToLong(char texto[20]) {
     }
 }
 
-void tomarPersonas(struct Persona personas[], long cantPersonas, long personasATomar, char localidades[][70]) {
+void tomarPersonas(struct Personas personas[], long cantPersonas, long personasATomar, char localidades[][70]) {
     long randoms[cantPersonas];
 
     char genero[2][2] = {
@@ -142,7 +142,7 @@ void tomarPersonas(struct Persona personas[], long cantPersonas, long personasAT
 
                 if (comas == 3) {
                     char *pEnd;
-                    personas[posPersonas].edad = strtol(token, &pEnd, 10);
+                    strcpy(personas[posPersonas].edad, token);
                 }
 
                 if (comas == 4) {
@@ -204,6 +204,37 @@ long cantidadPersonas() {
     return cantPersonas;
 }
 
+void imprimirEnArchivo(struct Personas personas[], long personasATomar){
+    
+    FILE *salida;
+
+    salida=fopen("salida.txt","w+");
+
+    for(int n=0; n<personasATomar-1; ++n){
+        
+        char linea[100];
+        strcat(personas[n].nombre,linea);
+        strcat(",",linea);
+        strcat(personas[n].apellido,linea);
+        strcat(",",linea);
+        strcat(personas[n].localidad,linea);
+        strcat(",",linea);
+        strcat(personas[n].edad,linea);
+        strcat(",",linea);
+        strcat(personas[n].genero,linea);
+        strcat(",",linea);
+        strcat(personas[n].interes,linea);
+
+        printf("%s",linea);
+
+        fputs(linea,(FILE*)salida);
+
+    }
+
+    fclose(salida);
+
+}
+
 int main()
 {
     long cantLocalidades = cantidadLocalidades(), cantPersonas = cantidadPersonas(), personasATomar = 0;
@@ -224,18 +255,11 @@ int main()
         }
     }
 
-    struct Persona personas[personasATomar];
+    struct Personas personas[personasATomar];
 
     tomarPersonas(personas, cantPersonas, personasATomar, localidades);
 
-    for (long n = 0 ; n < (personasATomar - 1) ; ++n) {
-        printf("%s\n", personas[n].nombre);
-        printf("%s\n", personas[n].apellido);
-        printf("%s\n", personas[n].localidad);
-        printf("%d\n", personas[n].edad);
-        printf("%s\n", personas[n].genero);
-        printf("%s\n", personas[n].interes);
-    }
+    imprimirEnArchivo(personas, personasATomar);
 
     return 0;
 }

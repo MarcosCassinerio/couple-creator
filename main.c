@@ -206,7 +206,6 @@ long cantidadPersonas() {
 }
 
 void imprimirEnArchivo(struct Personas personas[], long personasATomar){
-    
     FILE *salida;
 
     salida = fopen("salida.txt","w+");
@@ -231,7 +230,6 @@ void imprimirEnArchivo(struct Personas personas[], long personasATomar){
     }
 
     fclose(salida);
-
 }
 
 int main(){

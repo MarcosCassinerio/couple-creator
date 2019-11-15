@@ -5,7 +5,7 @@
 struct Persona {
     char nombre[20];
     char apellido[20];
-    char localidad[20];
+    char localidad[70];
     int edad;
     char genero[20];
     char interes[20];
@@ -55,10 +55,10 @@ long stringToLong(char texto[20]) {
 void tomarPersonas(struct Persona personas[], long cantPersonas, long personasATomar, char localidades[][70]) {
     long randoms[cantPersonas];
 
-    char genero[2][1] = {
+    char genero[2][2] = {
         "M",
         "F"
-    }, interes[4][1] = {
+    }, interes[4][2] = {
         "F",
         "M",
         "A",
@@ -109,10 +109,6 @@ void tomarPersonas(struct Persona personas[], long cantPersonas, long personasAT
         }
     }
 
-    /*for (long n = 0 ; n < personasATomar ; ++n) {
-        printf("%lu %lu\n", n, randoms[n]);
-    }*/
-
     FILE *personasFile;
     personasFile = fopen("personas.txt", "r");
     
@@ -121,47 +117,46 @@ void tomarPersonas(struct Persona personas[], long cantPersonas, long personasAT
     long posPersonas = 0;
     for (long cont = 1 ; !feof((FILE*)personasFile) || cont < randoms[personasATomar - 1] ; ++cont) {    
         fgets(linea, 70, (FILE*)personasFile);
-
         
         if (cont == randoms[posPersonas]) {
             int comas = 0;
-        
-            printf("%s\n", linea);
 
-            for (int n = 0 ; (linea[n] != ' ') || (linea[n] != '\0') ; ++n) {
-                char texto[20];
+            char coma[2] = ",", *token;
 
-                for (int h = 0 ; (linea[n] != ',') || (linea[n] != ' ') || (linea[n] != '\0') ; ++h, ++n) {
-                    texto[h] = linea[n];
-                }
-
-                texto[19] = '\0';
-
-                //printf("%s", texto);
+            token = strtok(linea, coma);
+            
+            while( token != NULL ) {
 
                 if (comas == 0) {
-                    strcpy(personas[posPersonas].nombre, texto);
+                    strcpy(personas[posPersonas].nombre, token);
                 }
 
                 if (comas == 1) {
-                    strcpy(personas[posPersonas].apellido, texto);
+                    strcpy(personas[posPersonas].apellido, token);
                 }
 
                 if (comas == 2) {
-                    strcpy(personas[posPersonas].localidad, localidades[(long)texto - 1]);
+                    char *pEnd;
+                    strcpy(personas[posPersonas].localidad, localidades[strtol(token, &pEnd, 10) - 1]);
                 }
 
                 if (comas == 3) {
-                    personas[posPersonas].edad = (int)texto;
+                    char *pEnd;
+                    personas[posPersonas].edad = strtol(token, &pEnd, 10);
                 }
 
                 if (comas == 4) {
-                    strcpy(personas[posPersonas].genero, genero[(int)texto - 1]);
+                    char *pEnd;
+                    strcpy(personas[posPersonas].genero, genero[strtol(token, &pEnd, 10) - 1]);
                 }
 
                 if (comas == 5) {
-                    strcpy(personas[posPersonas].interes, interes[(int)texto - 1]);
+                    token[1] = '\0';
+                    char *pEnd;
+                    strcpy(personas[posPersonas].interes, interes[strtol(token, &pEnd, 10) - 1]);
                 }
+                
+                token = strtok(NULL, coma);
 
                 ++comas;
             }
@@ -232,6 +227,15 @@ int main()
     struct Persona personas[personasATomar];
 
     tomarPersonas(personas, cantPersonas, personasATomar, localidades);
+
+    for (long n = 0 ; n < (personasATomar - 1) ; ++n) {
+        printf("%s\n", personas[n].nombre);
+        printf("%s\n", personas[n].apellido);
+        printf("%s\n", personas[n].localidad);
+        printf("%d\n", personas[n].edad);
+        printf("%s\n", personas[n].genero);
+        printf("%s\n", personas[n].interes);
+    }
 
     return 0;
 }

@@ -137,7 +137,7 @@ void tomarPersonas(struct Persona personas[], long cantPersonas, long personasAT
 
                 texto[19] = '\0';
 
-                printf("%s", texto);
+                //printf("%s", texto);
 
                 if (comas == 0) {
                     strcpy(personas[posPersonas].nombre, texto);

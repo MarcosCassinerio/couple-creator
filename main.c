@@ -21,7 +21,7 @@ struct Personas {
 
 // tomarLocalidades: char[][]
 // La funcion toma un array bidimensional de caracteres y guarda en este el contenido del archivo "codigoLocalidades.txt",
-// donde la localidad de codigo n esta guardada en el array localidades[n].
+// donde la localidad de codigo n esta guardada en el array localidades[n-1].
 
 void tomarLocalidades(char localidades[][70]) {
     long localidadesPos = 0;
@@ -80,7 +80,8 @@ long cantidadLocalidades() {
 }
 
 // tomarNumerosRandom: long[] long long
-// La funcion genera una lista de n numeros random (sin repetir), siendo n el segundo parametro de la funcion.
+// La funcion genera una lista ordenada de n numeros random (sin repetir), siendo n el segundo parametro de la funcion(la cantidad de personas
+// a tomar del archivo "personas.txt").
 // Esta lista de numeros random ademas esta ordenada de menor a mayor.
 
 void tomarNumerosRamdom(long numerosRandom[], long personasATomar, long cantPersonas) {
@@ -133,7 +134,7 @@ void tomarNumerosRamdom(long numerosRandom[], long personasATomar, long cantPers
 // La funcion toma un array de Personas, un long que indica el largo del array, otro long que indica la cantidad de personas a tomar
 // y un array bidimensional de caracteres que contiene las localidades ubicadas por su codigo.
 // Se lee el archivo "personas.txt" (que contiene los datos de cada persona) y toma un grupo de esa lista segun las posiciones que indique
-// la lista de numeros random(que se genera con tomarNumerosRamdom). Luego, se guarda la informacion de estas personas en el array
+// la lista de numeros random(que se genera conla funcion tomarNumerosRamdom). Luego, se guarda la informacion de estas personas en el array
 // de Personas.
 
 void tomarPersonas(struct Personas personas[], long cantPersonas, long personasATomar, char localidades[][70]) {
@@ -150,10 +151,6 @@ void tomarPersonas(struct Personas personas[], long cantPersonas, long personasA
     };
 
     tomarNumerosRamdom(numerosRandom, personasATomar, cantPersonas);
-
-    for (int n = 0 ; n < personasATomar ; ++n) {
-        printf("%lu\n", numerosRandom[n]);
-    }
 
     FILE *personasFile;
     personasFile = fopen("personas.txt", "r");
@@ -278,7 +275,7 @@ int main(){
         scanf("%d", &personasATomar);
 
         if (personasATomar <= 0 || personasATomar > cantPersonas) {
-            printf("El numero ingresado no es nardo, ingrese de nuevo:\n");
+            printf("El numero ingresado no es valido, ingrese uno nuevo:\n");
 
             personasATomar = 0;
         }
@@ -289,6 +286,8 @@ int main(){
     tomarPersonas(personas, cantPersonas, personasATomar, localidades);
 
     imprimirEnArchivo(personas, personasATomar);
+
+    printf("El archivo salida.txt se ha creado exitosamente con %lu personas", personasATomar);
 
     return 0;
 }

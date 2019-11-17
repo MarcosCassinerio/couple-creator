@@ -1,6 +1,14 @@
+/*
+Lucas Bachur - Marcos Cassinerio
+LCC - Trabajo Practico 2
+*/
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+
+// Representamos a las personas mediante una estructura Personas que tiene 6 arrays de chars que representan
+// nombre, apellido, localidad, edad, genero e interes que le corresponden a cierta persona
 
 struct Personas {
     char nombre[20];
@@ -10,6 +18,10 @@ struct Personas {
     char genero[20];
     char interes[20];
 } Persona;
+
+// tomarLocalidades: char[][]
+// La funcion toma un array bidimensional de caracteres y guarda en este el contenido del archivo "codigoLocalidades.txt",
+// donde la localidad de codigo n esta guardada en el array localidades[n].
 
 void tomarLocalidades(char localidades[][70]) {
     long localidadesPos = 0;
@@ -45,6 +57,9 @@ void tomarLocalidades(char localidades[][70]) {
     fclose(localidadesFile);
 }
 
+// cantidadLocalidades: -> long
+// La funcion lee el archivo "codigoLocalidades.txt" y devuelve la cantidad de lineas(localidades) que hay en este.
+
 long cantidadLocalidades() {
     long cantLocalidades = 0;
 
@@ -63,6 +78,10 @@ long cantidadLocalidades() {
 
     return cantLocalidades;
 }
+
+// tomarNumerosRandom: long[] long long
+// La funcion genera una lista de n numeros random (sin repetir), siendo n el segundo parametro de la funcion.
+// Esta lista de numeros random ademas esta ordenada de menor a mayor.
 
 void tomarNumerosRamdom(long numerosRandom[], long personasATomar, long cantPersonas) {
     for (long cont = 0 ; cont < personasATomar ; ++cont) {
@@ -109,6 +128,13 @@ void tomarNumerosRamdom(long numerosRandom[], long personasATomar, long cantPers
         }
     }
 }
+
+// tomarPersonas: Personas[] long long char[][]
+// La funcion toma un array de Personas, un long que indica el largo del array, otro long que indica la cantidad de personas a tomar
+// y un array bidimensional de caracteres que contiene las localidades ubicadas por su codigo.
+// Se lee el archivo "personas.txt" (que contiene los datos de cada persona) y toma un grupo de esa lista segun las posiciones que indique
+// la lista de numeros random(que se genera con tomarNumerosRamdom). Luego, se guarda la informacion de estas personas en el array
+// de Personas.
 
 void tomarPersonas(struct Personas personas[], long cantPersonas, long personasATomar, char localidades[][70]) {
     long numerosRandom[personasATomar];
@@ -186,6 +212,9 @@ void tomarPersonas(struct Personas personas[], long cantPersonas, long personasA
     }
 }
 
+// cantidadPersonas: -> long
+// La funcion lee el archivo "personas.txt" y devuelve la cantidad de lineas(personas) que hay en este.
+
 long cantidadPersonas() {
     long cantPersonas = 0;
 
@@ -204,6 +233,10 @@ long cantidadPersonas() {
 
     return cantPersonas;
 }
+
+// imprimirEnArchivo: Personas[] long
+// La funcion toma un array de Personas y un long que contiene el largo del array.
+// Se genera un archivo "salida.txt" y en este se escribe la lista de personas que se le paso como parametro a la funcion.
 
 void imprimirEnArchivo(struct Personas personas[], long personasATomar){
     FILE *salida;

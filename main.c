@@ -19,7 +19,6 @@ struct Personas {
     char interes[20];
 } Persona;
 
-// tomarLocalidades: char[][]
 // La funcion toma un array bidimensional de caracteres y guarda en este el contenido del archivo "codigoLocalidades.txt",
 // donde la localidad de codigo n esta guardada en el array localidades[n-1].
 
@@ -79,7 +78,6 @@ long cantidadLocalidades() {
     return cantLocalidades;
 }
 
-// tomarNumerosRandom: long[] long long
 // La funcion genera una lista ordenada de n numeros random (sin repetir), siendo n el segundo parametro de la funcion(la cantidad de personas
 // a tomar del archivo "personas.txt").
 // Esta lista de numeros random ademas esta ordenada de menor a mayor.
@@ -130,7 +128,6 @@ void tomarNumerosRamdom(long numerosRandom[], long personasATomar, long cantPers
     }
 }
 
-// tomarPersonas: Personas[] long long char[][]
 // La funcion toma un array de Personas, un long que indica el largo del array, otro long que indica la cantidad de personas a tomar
 // y un array bidimensional de caracteres que contiene las localidades ubicadas por su codigo.
 // Se lee el archivo "personas.txt" (que contiene los datos de cada persona) y toma un grupo de esa lista segun las posiciones que indique
@@ -169,34 +166,33 @@ void tomarPersonas(struct Personas personas[], long cantPersonas, long personasA
             token = strtok(linea, coma);
             
             while( token != NULL ) {
+                
+                char *pEnd;
 
-                if (comas == 0) {
-                    strcpy(personas[posPersonas].nombre, token);
-                }
+                switch (comas) {
+                    case 0:
+                        strcpy(personas[posPersonas].nombre, token);
+                        break;
 
-                if (comas == 1) {
-                    strcpy(personas[posPersonas].apellido, token);
-                }
+                    case 1:
+                        strcpy(personas[posPersonas].apellido, token);
+                        break;
 
-                if (comas == 2) {
-                    char *pEnd;
-                    strcpy(personas[posPersonas].localidad, localidades[strtol(token, &pEnd, 10) - 1]);
-                }
+                    case 2:
+                        strcpy(personas[posPersonas].localidad, localidades[strtol(token, &pEnd, 10) - 1]);
+                        break;
 
-                if (comas == 3) {
-                    char *pEnd;
-                    strcpy(personas[posPersonas].edad, token);
-                }
+                    case 3:
+                        strcpy(personas[posPersonas].edad, token);
+                        break;
 
-                if (comas == 4) {
-                    char *pEnd;
-                    strcpy(personas[posPersonas].genero, genero[strtol(token, &pEnd, 10) - 1]);
-                }
+                    case 4:
+                        strcpy(personas[posPersonas].genero, genero[strtol(token, &pEnd, 10) - 1]);
+                        break;
 
-                if (comas == 5) {
-                    token[1] = '\0';
-                    char *pEnd;
-                    strcpy(personas[posPersonas].interes, interes[strtol(token, &pEnd, 10) - 1]);
+                    case 5:
+                        strcpy(personas[posPersonas].interes, interes[strtol(token, &pEnd, 10) - 1]);
+                        break;
                 }
                 
                 token = strtok(NULL, coma);
@@ -231,7 +227,6 @@ long cantidadPersonas() {
     return cantPersonas;
 }
 
-// imprimirEnArchivo: Personas[] long
 // La funcion toma un array de Personas y un long que contiene el largo del array.
 // Se genera un archivo "salida.txt" y en este se escribe la lista de personas que se le paso como parametro a la funcion.
 
@@ -272,7 +267,7 @@ int main(){
     printf("Ingrese la cantidad de personas a tomar:\n");
 
     while (personasATomar == 0) {
-        scanf("%d", &personasATomar);
+        scanf("%lu", &personasATomar);
 
         if (personasATomar <= 0 || personasATomar > cantPersonas) {
             printf("El numero ingresado no es valido, ingrese uno nuevo:\n");
